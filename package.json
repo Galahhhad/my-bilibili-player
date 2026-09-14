@@ -1,0 +1,10 @@
+{
+  "name": "my-bilibili-player",
+  "version": "1.0.0",
+  "private": false,
+  "description": "BiliPlayer",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

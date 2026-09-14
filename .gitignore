@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+Thumbs.db
+
+# 保留 videos 目录，不提交离线缓存
+videos/*
+!videos/.gitkeep

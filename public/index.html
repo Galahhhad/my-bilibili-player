@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BiliPlayer</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect rx='8' width='32' height='32' fill='%23fb7299'/%3E%3Cpolygon points='12,8 26,16 12,24' fill='%231a0b12'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">▶</span>
+          <strong>BiliPlayer</strong>
+        </div>
+        <p class="topbar-hint">空格播放 / 暂停 · 点按方向键 ±5 秒 · 按住 → 二倍速 · 上下键音量</p>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="stage">
+        <div class="player" id="player" tabindex="0">
+          <video id="video" playsinline preload="metadata" muted></video>
+          <audio id="audio" preload="metadata"></audio>
+          <canvas id="danmaku" class="danmaku-layer"></canvas>
+          <div class="center-stack">
+            <button class="big-play" id="bigPlay" type="button" aria-label="播放">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+            </button>
+            <div class="toast" id="toast" hidden></div>
+          </div>
+          <div class="loading" id="loading" hidden>正在打开缓存…</div>
+          <div class="controls" id="controls">
+            <div class="progress-wrap" id="progressWrap">
+              <canvas class="heatmap" id="heatmap"></canvas>
+              <div class="progress-track">
+                <div class="progress-buffer" id="bufferBar"></div>
+                <div class="progress-played" id="playedBar"></div>
+                <div class="progress-thumb" id="progressThumb"></div>
+              </div>
+              <div class="progress-tip" id="progressTip" hidden></div>
+            </div>
+            <div class="control-row">
+              <button class="icon-btn" id="playBtn" type="button" aria-label="播放">
+                <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                <svg class="icon-pause" viewBox="0 0 24 24" hidden><path d="M7 5h4v14H7zm6 0h4v14h-4z" /></svg>
+              </button>
+              <div class="time" id="timeLabel">00:00 / 00:00</div>
+              <div class="volume-box">
+                <button class="icon-btn" id="muteBtn" type="button" aria-label="静音">
+                  <svg class="icon-vol" viewBox="0 0 24 24"><path d="M5 10v4h4l5 4V6L9 10H5zm12.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z" /></svg>
+                </button>
+                <input id="volume" type="range" min="0" max="100" value="80" />
+              </div>
+              <div class="spacer"></div>
+              <div class="menu-wrap">
+                <button class="text-btn on" id="danmakuToggle" type="button" title="点击开关弹幕，右键调节样式">弹幕</button>
+                <div class="popover" id="danmakuMenu" hidden>
+                  <label>不透明度 <span id="opacityVal">80%</span></label>
+                  <input id="opacity" type="range" min="10" max="100" value="80" />
+                  <label>显示区域</label>
+                  <div class="chip-row" id="areaRow">
+                    <button type="button" data-area="0.25">1/4</button>
+                    <button type="button" data-area="0.5">半屏</button>
+                    <button type="button" data-area="1" class="on">全屏</button>
+                  </div>
+                </div>
+              </div>
+              <div class="menu-wrap">
+                <button class="text-btn" id="speedBtn" type="button">倍速</button>
+                <div class="popover speed-menu" id="speedMenu" hidden>
+                  <button type="button" data-speed="2">2.0x</button>
+                  <button type="button" data-speed="1.5">1.5x</button>
+                  <button type="button" data-speed="1.25">1.25x</button>
+                  <button type="button" data-speed="1" class="on">1.0x</button>
+                  <button type="button" data-speed="0.75">0.75x</button>
+                  <button type="button" data-speed="0.5">0.5x</button>
+                </div>
+              </div>
+              <button class="icon-btn" id="wideBtn" type="button" aria-label="网页全屏">
+                <svg viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4" /></svg>
+              </button>
+              <button class="icon-btn" id="fullBtn" type="button" aria-label="全屏">
+                <svg viewBox="0 0 24 24"><path d="M7 3H3v4m14-4h4v4M3 17v4h4m14-4v4h-4" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="meta">
+          <h1 id="title">选择一集开始播放</h1>
+          <p id="subtitle">扫描 videos 目录中的 B 站离线缓存</p>
+          <div class="part-chips" id="partChips"></div>
+        </div>
+      </section>
+
+      <aside class="shelf">
+        <div class="shelf-head">
+          <h2>分集列表</h2>
+          <span id="partCount">0</span>
+        </div>
+        <input class="search" id="search" type="search" placeholder="筛选分集" />
+        <div class="part-list" id="partList"></div>
+      </aside>
+    </main>
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>
