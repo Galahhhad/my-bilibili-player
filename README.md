@@ -6,11 +6,19 @@
 
 ## 启动
 
+双击项目根目录的 `start.bat`，会启动服务并自动打开浏览器。
+
+```bash
+npm start
+```
+
+或只开服务、不自动打开浏览器：
+
 ```bash
 node server.js
 ```
 
-浏览器打开 http://127.0.0.1:3456
+默认地址 http://127.0.0.1:3456
 
 缓存视频是 HEVC（`hvc1`）。Windows 上请用 Edge 或已安装 [HEVC 视频扩展](https://apps.microsoft.com/detail/9nmzlz57r3t7) 的 Chrome。
 

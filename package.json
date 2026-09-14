@@ -5,6 +5,6 @@
   "description": "BiliPlayer",
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js --open"
   }
 }

@@ -1,6 +1,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { exec } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -319,8 +320,22 @@ const server = http.createServer((req, res) => {
   servePublic(req, res, pathname);
 });
 
+function openBrowser(url) {
+  const command =
+    process.platform === "win32"
+      ? `cmd /c start "" "${url}"`
+      : process.platform === "darwin"
+        ? `open "${url}"`
+        : `xdg-open "${url}"`;
+  exec(command, (err) => {
+    if (err) console.log(`请手动打开 ${url}`);
+  });
+}
+
 rebuildCatalog();
+const url = `http://127.0.0.1:${PORT}`;
 server.listen(PORT, "127.0.0.1", () => {
-  console.log(`BiliPlayer: http://127.0.0.1:${PORT}`);
+  console.log(`BiliPlayer: ${url}`);
   console.log(`已识别缓存分集: ${catalog.size}`);
+  if (process.argv.includes("--open")) openBrowser(url);
 });
